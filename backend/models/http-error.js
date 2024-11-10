@@ -1,7 +1,7 @@
 class HttpError extends Error {
     constructor(message, errorCode){
         super(message)
-        self.code = errorCode
+        this.code = errorCode
     }
 }
 
