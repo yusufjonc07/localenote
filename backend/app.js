@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 app.use("/api/places", place_router);
 
 // registering user router 
-app.use("/ai/users", user_router);
+app.use("/api/users", user_router);
 
 /// whenever there is no the requested route, 404 not found error should be thowen
 app.use((req, res, next) => {
