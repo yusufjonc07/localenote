@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyBarser = require("body-parser");
 const HttpError = require("./models/http-error");
 const place_router = require("./routes/places-route");
@@ -12,10 +13,10 @@ app.get("/", (req, res) => {
   res.send(`Hello home`);
 });
 
-// registering place router 
+// registering place router
 app.use("/api/places", place_router);
 
-// registering user router 
+// registering user router
 app.use("/api/users", user_router);
 
 /// whenever there is no the requested route, 404 not found error should be thowen
@@ -35,4 +36,13 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5001);
+mongoose
+  .connect(
+    "mongodb+srv://yahmedov64:cP5ucckiTzv3Meyx@cluster0.qjten.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  )
+  .then(() => {
+    app.listen(5001);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
