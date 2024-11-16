@@ -1,5 +1,6 @@
 const uuid = require("uuid");
 const HttpError = require("../models/http-error");
+const Place = require("../models/place");
 
 let DUMMY_PLACES = [
   {
@@ -15,62 +16,135 @@ let DUMMY_PLACES = [
   },
 ];
 
-const getPlacesByUserId = (req, res) => {
+const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uId;
 
-  const places = DUMMY_PLACES.filter((place) => place.creator === userId);
+  let places;
+
+  try {
+    places = await Place.find({creator: userId});
+  } catch (error) {
+    const err = new HttpError(
+      "Could not fetch places of this user, please try again",
+      500
+    );
+    return next(err);
+  }
+
+  if(!places || places.length === 0){
+    const err = new HttpError(
+      `There are no places by ${userId}`,
+      404
+    );
+    return next(err);
+  }
 
   res.json({ places });
 };
 
-const getPlaceById = (req, res) => {
+const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pId;
+  let place;
 
-  const place = DUMMY_PLACES.find((place) => place.id === placeId);
-
-  if (!place) {
-    throw new HttpError("Place was not found!");
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    const err = new HttpError(
+      "Opps, something went wrong, please try again",
+      500
+    );
+    return next(err);
   }
 
-  res.json({ place });
+  if (!place) {
+    const err = new HttpError("Place was not found!", 404);
+    return next(err)
+  }
+  return res.json({place: place.toObject({getters: true}) });
 };
 
-const createPlace = (req, res) => {
+const createPlace = async (req, res, next) => {
   const { title, description, location, address, creator } = req.body;
 
-  const newPlace = {
-    id: uuid.v4(),
+  const newPlace = new Place({
     title,
     description,
     location,
     address,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(newPlace);
-
-  res.status(201).json(newPlace);
+  try {
+    await newPlace.save();
+    res.status(201).json(newPlace);
+  } catch (err) {
+    const error = new HttpError("Creating place failed, please try again", 500);
+    return next(error);
+  }
 };
 
-const updatePlace = (req, res) => {
+const updatePlace = async (req, res, next) => {
   const { title, description } = req.body;
   const placeId = req.params.pId;
 
-  const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) };
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+  let place;
 
-  updatedPlace.title = title;
-  updatedPlace.description = description;
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    const err = new HttpError(
+      "Opps, something went wrong, please try again",
+      500
+    );
+    return next(err);
+  }
 
-  DUMMY_PLACES[placeIndex] = updatedPlace;
+  if (!place) {
+    const err = new HttpError("Place was not found!", 404);
+    return next(err)
+  }
 
-  res.status(200).json({ place: updatedPlace });
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (error) {
+    const err = new HttpError(
+      "Opps, something went wrong, please try again",
+      500
+    );
+    return next(err);
+  }
+
+  res.status(200).json({ place: place.toObject({getters: true}) });
 };
 
-const deletePlace = (req, res) => {
+const deletePlace = async (req, res, next) => {
   const placeId = req.params.pId;
-  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
-  res.status(200).send("Place deleted");
+
+  let result;
+  try {
+    result = await Place.deleteOne({_id: placeId});
+  } catch (error) {
+    const err = new HttpError(
+      "Opps, could not delete this place, please try again",
+      500
+    );
+    return next(err);
+  }
+
+  if(result.deletedCount === 0){
+    const err = new HttpError(
+      "Place was not found",
+      404
+    );
+    return next(err)
+  }
+
+  res.status(200).json({ message: "Place was deleted"});
 };
 
 module.exports = {
