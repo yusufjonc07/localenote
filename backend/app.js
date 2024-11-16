@@ -37,9 +37,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://yahmedov64:cP5ucckiTzv3Meyx@cluster0.qjten.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect("mongodb+srv://yahmedov64:cP5ucckiTzv3Meyx@cluster0.qjten.mongodb.net/localnote-main?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => {
     app.listen(5001);
   })

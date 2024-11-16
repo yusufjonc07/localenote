@@ -1,22 +1,13 @@
 const HttpError = require("../models/http-error");
-const user = require("../models/user");
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
 
-DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "Yusuf Axmad",
-    email: "yahmedov64@gmail.com",
-    password: "qwerty1221",
-  },
-];
 
 const getUsers = async (req, res, next) => {
   let users;
 
   try {
-    users = await User.find({}, ["-password", "-email", "-__v"]);
+    users = await User.find({}, ["-password", "-email", "-__v"]).populate("places");
   } catch (error) {
     return next(new HttpError("Cannot fetch users. Try again later", 500));
   }
@@ -64,7 +55,7 @@ const signup = async (req, res, next) => {
     email,
     password,
     image: "https://avatars.githubusercontent.com/u/88669256?v=4",
-    places: "Makka, Madina, Quddus, Margilan",
+    places: [],
   });
 
   try {

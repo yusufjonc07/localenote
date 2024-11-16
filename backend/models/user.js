@@ -24,8 +24,9 @@ const userSchema = Schema({
   },
   
   places: {
-    type: String,
+    type: Array(mongoose.Types.ObjectId),
     required: true,
+    ref: "Place"
   },
 });
 
