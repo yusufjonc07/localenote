@@ -6,12 +6,13 @@ import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceItem.css";
+import { useHttpHook } from "../../shared/hooks/http-hook";
 
 const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const auth = useContext(AuthContext);
-
+  const { sendRequest, HttpFeedback } = useHttpHook();
   const openMapHandler = () => setShowMap(true);
 
   const closeMapHandler = () => setShowMap(false);
@@ -20,13 +21,22 @@ const PlaceItem = (props) => {
 
   const cancelDeleteWarningHandler = () => setShowConfirmModal(false);
 
-  const confirmDeletionHandler = () => {
-    alert("DELETING...");
+  const confirmDeletionHandler = async () => {
+    try {
+      await sendRequest(
+        `http://localhost:5001/api/places/${props.id}`,
+        "DELETE"
+      );
+
+      props.onDelete(props.id);
+    } catch (error) {}
+
     setShowConfirmModal(false);
   };
 
   return (
     <React.Fragment>
+      <HttpFeedback />
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
