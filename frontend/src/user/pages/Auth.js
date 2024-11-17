@@ -13,6 +13,7 @@ import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpHook } from "../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const Auth = () => {
   const { sendRequest, HttpFeedback } = useHttpHook();
@@ -114,6 +115,7 @@ const Auth = () => {
               validators={[VALIDATOR_REQUIRE()]}
             />
           )}
+          {!isLoginMode && <ImageUpload id="image" center />}
 
           <Input
             element="input"
