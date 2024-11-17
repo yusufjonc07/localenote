@@ -23,7 +23,7 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(err);
   }
 
-  res.json({ places });
+  res.json({ places: places.map(place => place.toObject({getters: true})) });
 };
 
 const getPlaceById = async (req, res, next) => {
