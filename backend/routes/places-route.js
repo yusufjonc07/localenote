@@ -6,6 +6,7 @@ const {
   updatePlace,
   deletePlace,
 } = require("../controllers/places-controller");
+const { check } = require("express-validator");
 
 const place_router = Router();
 
@@ -16,7 +17,11 @@ place_router.get("/user/:uId", getPlacesByUserId);
 place_router.get("/:pId", getPlaceById);
 
 // Create a new place
-place_router.post("/", createPlace);
+place_router.post("/", [
+  check('title').isString().notEmpty(),
+  check('description').isString().notEmpty(),
+  check('creator').isString().notEmpty(),
+], createPlace);
 
 // Update a place by id
 place_router.patch("/:pId", updatePlace);

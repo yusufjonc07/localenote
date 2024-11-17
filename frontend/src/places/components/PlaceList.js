@@ -5,8 +5,9 @@ import PlaceItem from './PlaceItem';
 import './PlaceList.css';
 import Button from '../../shared/components/FormElements/Button';
 
+
 const PlaceList = props => {
-  if (props.items.length === 0) {
+  if (props.items && props.items.length === 0) {
     return (
       <div className="place-list center">
         <Card>
@@ -21,7 +22,7 @@ const PlaceList = props => {
     <ul className="place-list">
       {props.items.map(place => (
         <PlaceItem
-          key={place.id}
+          key={place._id}
           id={place.id}
           image={place.image}
           title={place.title}

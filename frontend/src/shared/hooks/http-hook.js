@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ErrorModal from "../components/UIElements/ErrorModal";
+import LoadingSpinner from "../components/UIElements/LoadingSpinner";
 
 export const useHttpHook = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,6 @@ export const useHttpHook = () => {
         setError(err.message);
         throw err;
       }
-      
     },
     []
   );
@@ -51,5 +52,18 @@ export const useHttpHook = () => {
     };
   }, []);
 
-  return { isLoading, error, sendRequest, clearError };
+  const HttpFeedback = () => {
+    return (
+      <>
+        {error && <ErrorModal onClear={clearError} error={error} />}
+        {isLoading && (
+          <div className="center">
+            <LoadingSpinner show={isLoading} asOverlay />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return { sendRequest, HttpFeedback };
 };

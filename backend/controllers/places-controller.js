@@ -51,8 +51,9 @@ const getPlaceById = async (req, res, next) => {
 };
 
 const createPlace = async (req, res, next) => {
-  const { title, description, location, address, creator } = req.body;
-
+  const { title, description, address, creator, location } = req.body;
+  console.log(location);
+  
   const newPlace = new Place({
     title,
     description,
@@ -66,6 +67,8 @@ const createPlace = async (req, res, next) => {
   let user;
 
   try {
+    
+    
     user = await User.findById(creator);
   } catch (error) {
     const err = new HttpError(
@@ -91,7 +94,7 @@ const createPlace = async (req, res, next) => {
 
     await sess.commitTransaction();
   } catch (err) {
-    const error = new HttpError("Creating place failed, please try again", 500);
+    const error = new HttpError(err.message, 500);
     return next(error);
   }
 

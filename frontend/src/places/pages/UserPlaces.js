@@ -1,26 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import PlaceList from '../components/PlaceList';
-
+import PlaceList from "../components/PlaceList";
+import { useHttpHook } from "../../shared/hooks/http-hook";
 
 const UserPlaces = () => {
   const userId = useParams().userId;
-
   const [loadedPlaces, setPlaces] = useState([]);
-
-  const getPlaces = async () => {
-    const response = await fetch(`http://localhost:5001/api/places/user/${userId}`);
-    const responseData = await response.json();
-    setPlaces(responseData.places);
-  };
-
-  useEffect(()=>{
-    getPlaces()
-  }, [])
+  const { sendRequest, HttpFeedback } = useHttpHook();
 
 
-  return <PlaceList items={loadedPlaces} />;
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const res = await sendRequest(`http://localhost:5001/api/places/user/${userId}`);
+        setPlaces(res.places);
+      } catch (error) {}
+    };
+    fetchPlaces();
+  }, [userId, sendRequest]);
+
+  return (
+    <>
+      <HttpFeedback />
+      <PlaceList items={loadedPlaces} />
+    </>
+  );
 };
 
 export default UserPlaces;

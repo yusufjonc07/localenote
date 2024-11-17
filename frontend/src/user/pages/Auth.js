@@ -10,14 +10,12 @@ import {
 } from "../../shared/util/validators";
 
 import Card from "../../shared/components/UIElements/Card";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import Button from "../../shared/components/FormElements/Button";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpHook } from "../../shared/hooks/http-hook";
 
 const Auth = () => {
-  const { isLoading, error, sendRequest, clearError } = useHttpHook();
+  const { sendRequest, HttpFeedback } = useHttpHook();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const auth = useContext(AuthContext);
   const [formState, inputHandler, setFormData] = useForm(
@@ -64,7 +62,7 @@ const Auth = () => {
 
     if (!isLoginMode) {
       try {
-        await sendRequest(
+        const resData = await sendRequest(
           "http://localhost:5001/api/users/signup",
           "POST",
 
@@ -77,11 +75,11 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login();
+        auth.login(resData.user._id);
       } catch (error) {}
     } else {
       try {
-        await sendRequest(
+        const resData = await sendRequest(
           "http://localhost:5001/api/users/login",
           "POST",
 
@@ -93,19 +91,14 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login();
+        auth.login(resData.user._id);
       } catch (error) {}
     }
   };
 
   return (
     <React.Fragment>
-      {error && <ErrorModal onClear={clearError} error={error} />}
-      {isLoading && (
-        <div className="center">
-          <LoadingSpinner show={isLoading} asOverlay />
-        </div>
-      )}
+      <HttpFeedback />
       <Card className="authentication">
         <h1 className="authentication__header">Login required</h1>
         <hr />

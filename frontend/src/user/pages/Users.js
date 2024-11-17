@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
 
 import UsersList from "../components/UsersList";
+import { useHttpHook } from "../../shared/hooks/http-hook";
 
 const Users = () => {
+  const { sendRequest, HttpFeedback } = useHttpHook();
   const [users, setUsers] = useState([]);
 
-  const getUsers = async () => {
-    const response = await fetch("http://localhost:5001/api/users/");
-    const responseData = await response.json();
-    setUsers(responseData.users);
-  };
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const res = await sendRequest("http://localhost:5001/api/users/");
+        setUsers(res.users);
+      } catch (error) {}
+    };
+    getUsers();
+  }, [sendRequest]);
 
-  useEffect(()=>{
-    getUsers()
-  }, [])
-
-  return <UsersList items={users} />;
+  return (
+    <>
+      <HttpFeedback />
+      <UsersList items={users} />;
+    </>
+  );
 };
 
 export default Users;

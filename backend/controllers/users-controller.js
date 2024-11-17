@@ -67,7 +67,10 @@ const signup = async (req, res, next) => {
     );
   }
 
-  res.status(201).json(newUser);
+  res.status(201).json({
+    message: "Succesfull registration",
+    user: newUser
+  });
 };
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -86,7 +89,10 @@ const login = async (req, res, next) => {
     return next(new HttpError("Credential seems to be incorrect!", 401));
   }
 
-  res.status(200).json({user: identifiedUser});
+  res.status(200).json({
+    message: "Succesfully logged in!",
+    user: identifiedUser
+  });
 };
 
 module.exports = {

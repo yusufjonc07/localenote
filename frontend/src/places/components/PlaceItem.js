@@ -73,10 +73,10 @@ const PlaceItem = (props) => {
               VIEW ON MAP
             </Button>
 
-            {auth.isLoggedIn && (
+            {auth.isLoggedIn && auth.userId === props.creatorId && (
               <Button to={`/places/${props.id}/edit`}>EDIT</Button>
             )}
-            {auth.isLoggedIn && (
+            {auth.isLoggedIn && auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>
