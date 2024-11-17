@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-import UsersList from '../components/UsersList';
+import UsersList from "../components/UsersList";
 
 const Users = () => {
-  const USERS = [
-    {
-      id: 'u1',
-      name: 'Max Schwarz',
-      image:
-        'https://images.pexels.com/photos/839011/pexels-photo-839011.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-      places: 3
-    }
-  ];
+  const [users, setUsers] = useState([]);
 
-  return <UsersList items={USERS} />;
+  const getUsers = async () => {
+    const response = await fetch("http://localhost:5001/api/users/");
+    const responseData = await response.json();
+    setUsers(responseData.users);
+  };
+
+  useEffect(()=>{
+    getUsers()
+  }, [])
+
+  return <UsersList items={users} />;
 };
 
 export default Users;
