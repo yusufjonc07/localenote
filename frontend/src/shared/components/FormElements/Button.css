@@ -11,6 +11,23 @@
   display: inline-block;
 }
 
+.button-group{
+  margin-right: 1rem;
+}
+
+.button-group button:first-child{
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+.button-group button:last-child{
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+}
+
+.button-group button{
+  margin: 0 !important;
+}
+
 .button:focus {
   outline: none;
 }

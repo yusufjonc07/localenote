@@ -39,6 +39,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -48,6 +49,10 @@ const Auth = () => {
           ...formState.inputs,
           name: {
             value: "",
+            isValid: false,
+          },
+          image: {
+            value: null,
             isValid: false,
           },
         },
@@ -63,15 +68,16 @@ const Auth = () => {
 
     if (!isLoginMode) {
       try {
+        const formData = new FormData();
+        formData.append("name", formState.inputs.name.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
+
         const resData = await sendRequest(
           "http://localhost:5001/api/users/signup",
           "POST",
-
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
+          formData,
           {
             "Content-Type": "application/json",
           }
@@ -115,7 +121,9 @@ const Auth = () => {
               validators={[VALIDATOR_REQUIRE()]}
             />
           )}
-          {!isLoginMode && <ImageUpload id="image" center />}
+          {!isLoginMode && (
+            <ImageUpload id="image" is center onInput={inputHandler} />
+          )}
 
           <Input
             element="input"
