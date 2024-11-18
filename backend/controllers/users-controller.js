@@ -86,7 +86,7 @@ const signup = async (req, res, next) => {
         userId: newUser.id,
         email: newUser.email,
       },
-      "allohu_akbar_lailaha_illalloh",
+      process.env.JWT_KEY,
       {
         expiresIn: "2h",
       }
@@ -137,7 +137,7 @@ const login = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: identifiedUser.id, email: identifiedUser.email },
-      'allohu_akbar_lailaha_illalloh',
+      process.env.JWT_KEY,
       { expiresIn: '1h' }
     );
   } catch (err) {
