@@ -20,11 +20,6 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(err);
   }
 
-  // if (!places || places.length === 0) {
-  //   const err = new HttpError(`There are no places by ${userId}`, 404);
-  //   return next(err);
-  // }
-
   res.json({ places: places.map(place => place.toObject({getters: true})) });
 };
 
@@ -120,6 +115,11 @@ const updatePlace = async (req, res, next) => {
     return next(err);
   }
 
+  if(place.creator !== req.userData.id){
+    const err = new HttpError("You are not allowed to edit this place!", 401);
+    return next(err);
+  }
+
   place.title = title;
   place.description = description;
 
@@ -153,6 +153,11 @@ const deletePlace = async (req, res, next) => {
 
   if (!place) {
     const err = new HttpError("Place not found", 404);
+    return next(err);
+  }
+
+  if(place.creator !== req.userData.id){
+    const err = new HttpError("You are not allowed to delete this place!", 401);
     return next(err);
   }
 
