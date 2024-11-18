@@ -7,10 +7,11 @@ const Users = () => {
   const { sendRequest, HttpFeedback } = useHttpHook();
   const [users, setUsers] = useState([]);
 
+
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await sendRequest(process.env.BACKEND_API_URL + "users/");
+        const res = await sendRequest(process.env.REACT_APP_API_URL + "users/");
         setUsers(res.users);
       } catch (error) {}
     };

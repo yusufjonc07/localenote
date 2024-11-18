@@ -13,7 +13,7 @@ const UserPlaces = () => {
     const fetchPlaces = async () => {
       try {
         const res = await sendRequest(
-          `${process.env.BACKEND_API_URL}places/user/${userId}`
+          `${process.env.REACT_APP_API_URL}places/user/${userId}`
         );
         setPlaces(res.places);
       } catch (error) {}

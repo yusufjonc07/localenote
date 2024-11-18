@@ -59,7 +59,7 @@ const NewPlace = () => {
         })
       );
 
-      await sendRequest(process.env.BACKEND_API_URL + "places", "POST", formData, {
+      await sendRequest(process.env.REACT_APP_API_URL + "places", "POST", formData, {
         Authorization: "Bearer " + auth.token,
       });
       history.push("/");
