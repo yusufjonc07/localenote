@@ -78,9 +78,6 @@ const Auth = () => {
           "http://localhost:5001/api/users/signup",
           "POST",
           formData,
-          {
-            "Content-Type": "application/json",
-          }
         );
         auth.login(resData.user._id);
       } catch (error) {}

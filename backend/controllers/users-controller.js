@@ -29,7 +29,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let hasUser;
 
@@ -54,7 +54,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image: "https://avatars.githubusercontent.com/u/88669256?v=4",
+    image: req.file.path,
     places: [],
   });
 

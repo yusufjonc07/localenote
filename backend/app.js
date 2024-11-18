@@ -4,18 +4,22 @@ const bodyBarser = require("body-parser");
 const HttpError = require("./models/http-error");
 const place_router = require("./routes/places-route");
 const user_router = require("./routes/users-route");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
 app.use(bodyBarser.json());
 
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
+
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 
   next();
 });
@@ -37,6 +41,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
   /// here we are listening for the event that request send from our endpoints.
   if (res.headerSent) {
     return next(error);
@@ -48,7 +57,9 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb+srv://yahmedov64:cP5ucckiTzv3Meyx@cluster0.qjten.mongodb.net/localnote-main?retryWrites=true&w=majority&appName=Cluster0")
+  .connect(
+    "mongodb+srv://yahmedov64:cP5ucckiTzv3Meyx@cluster0.qjten.mongodb.net/localnote-main?retryWrites=true&w=majority&appName=Cluster0"
+  )
   .then(() => {
     app.listen(5001);
   })

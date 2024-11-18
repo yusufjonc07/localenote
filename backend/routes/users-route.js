@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
+const fileUpload = require("../middleware/file-upload");
 const { getUsers, signup, login } = require("../controllers/users-controller");
 
 const user_router = Router();
@@ -10,6 +11,7 @@ user_router.get("/", getUsers);
 // Create new user + log user in
 user_router.post(
   "/signup",
+  fileUpload.single('image'),
   [
     check("name").notEmpty(),
     check("email").notEmpty().isEmail(),
