@@ -48,7 +48,7 @@ const getPlaceById = async (req, res, next) => {
 };
 
 const createPlace = async (req, res, next) => {
-  const { title, description, address, creator, location } = req.body;
+  const { title, description, address, location } = req.body;
   
   const newPlace = new Place({
     title,
@@ -56,7 +56,7 @@ const createPlace = async (req, res, next) => {
     location: JSON.parse(location),
     address,
     image: req.file.path,
-    creator,
+    creator: req.userData.id,
   });
 
   let user;
