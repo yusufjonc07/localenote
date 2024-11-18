@@ -1,13 +1,16 @@
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
-
+const bycrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res, next) => {
   let users;
 
   try {
-    users = await User.find({}, ["-password", "-email", "-__v"]).populate("places");
+    users = await User.find({}, ["-password", "-email", "-__v"]).populate(
+      "places"
+    );
   } catch (error) {
     return next(new HttpError("Cannot fetch users. Try again later", 500));
   }
@@ -50,10 +53,19 @@ const signup = async (req, res, next) => {
     );
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bycrypt.hash(password, 12);
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed. Please try again later", 500)
+    );
+  }
+
   const newUser = new User({
     name,
     email,
-    password,
+    password: hashedPassword,
     image: req.file.path,
     places: [],
   });
@@ -67,9 +79,28 @@ const signup = async (req, res, next) => {
     );
   }
 
-  res.status(201).json({
-    message: "Succesfull registration",
-    user: newUser
+  let token;
+  try {
+    token = jwt.sign(
+      {
+        userId: newUser.id,
+        email: newUser.email,
+      },
+      "allohu_akbar_lailaha_illalloh",
+      {
+        expiresIn: "2h",
+      }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Opps, Login failed. Plese try again later", 500)
+    );
+  }
+
+  res.status(200).json({
+    userId: newUser.id,
+    email: newUser.email,
+    token: token,
   });
 };
 const login = async (req, res, next) => {
@@ -85,13 +116,42 @@ const login = async (req, res, next) => {
     );
   }
 
-  if (!identifiedUser || identifiedUser.password !== password) {
+  if (!identifiedUser) {
     return next(new HttpError("Credential seems to be incorrect!", 401));
   }
 
-  res.status(200).json({
-    message: "Succesfully logged in!",
-    user: identifiedUser
+  let isPasswordValid;
+  try {
+    isPasswordValid = await bycrypt.compare(password, identifiedUser.password);
+  } catch (error) {
+    return next(
+      new HttpError("Opps, Login failed. Plese try again later", 500)
+    );
+  }
+
+  if (isPasswordValid === false) {
+    return next(new HttpError("Credential seems to be incorrect!", 401));
+  }
+
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: identifiedUser.id, email: identifiedUser.email },
+      'allohu_akbar_lailaha_illalloh',
+      { expiresIn: '1h' }
+    );
+  } catch (err) {
+    const error = new HttpError(
+      'Logging in failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({
+    userId: identifiedUser.id,
+    email: identifiedUser.email,
+    token: token
   });
 };
 

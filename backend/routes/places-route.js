@@ -8,6 +8,7 @@ const {
 } = require("../controllers/places-controller");
 const { check } = require("express-validator");
 const fileUpload = require("../middleware/file-upload");
+const checkAuth = require("../middleware/check-auth");
 
 const place_router = Router();
 
@@ -16,6 +17,10 @@ place_router.get("/user/:uId", getPlacesByUserId);
 
 // Get a specific place by place id (pid)
 place_router.get("/:pId", getPlaceById);
+
+
+// add middleware of authorization
+place_router.use(checkAuth)
 
 // Create a new place
 place_router.post(
