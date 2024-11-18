@@ -10,7 +10,7 @@ const Users = () => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await sendRequest("http://localhost:5001/api/users/");
+        const res = await sendRequest(process.env.BACKEND_API_URL + "users/");
         setUsers(res.users);
       } catch (error) {}
     };

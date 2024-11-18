@@ -75,7 +75,7 @@ const Auth = () => {
         formData.append("image", formState.inputs.image.value);
 
         const resData = await sendRequest(
-          "http://localhost:5001/api/users/signup",
+          process.env.BACKEND_API_URL + "users/signup",
           "POST",
           formData,
         );
@@ -84,7 +84,7 @@ const Auth = () => {
     } else {
       try {
         const resData = await sendRequest(
-          "http://localhost:5001/api/users/login",
+          process.env.BACKEND_API_URL + "users/login",
           "POST",
 
           JSON.stringify({
