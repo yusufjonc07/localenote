@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import {useCurrentPosition} from "react-use-geolocation"
+import { useCurrentPosition } from "react-use-geolocation";
 import { useForm } from "../../shared/hooks/use-form";
 
 import Input from "../../shared/components/FormElements/Input";
@@ -18,7 +18,7 @@ const NewPlace = () => {
   const auth = useContext(AuthContext);
   const { sendRequest, HttpFeedback } = useHttpHook();
   const [position] = useCurrentPosition();
-  const history = useHistory()
+  const history = useHistory();
   const [formState, inputHandler] = useForm(
     {
       title: {
@@ -45,24 +45,24 @@ const NewPlace = () => {
     event.preventDefault();
 
     try {
-
       const formData = new FormData();
-      formData.append("title", formState.inputs.title.value)
-      formData.append("address", formState.inputs.address.value)
-      formData.append("description", formState.inputs.description.value)
-      formData.append("creator", auth.userId)
-      formData.append("image", formState.inputs.image.value)
-      formData.append("location", JSON.stringify({
-        lat: position.coords.latitude,
-        long: position.coords.longitude,
-      }))
-
-      await sendRequest(
-        "http://localhost:5001/api/places",
-        "POST",
-        formData
+      formData.append("title", formState.inputs.title.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+      formData.append(
+        "location",
+        JSON.stringify({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        })
       );
-      history.push('/')
+
+      await sendRequest("http://localhost:5001/api/places", "POST", formData, {
+        Authorization: "Bearer " + auth.token,
+      });
+      history.push("/");
     } catch (error) {}
   };
 
@@ -70,10 +70,7 @@ const NewPlace = () => {
     <>
       <HttpFeedback />
       <form className="place-form" onSubmit={placeSubmitHandler}>
-        <ImageUpload
-          id="image"
-          onInput={inputHandler}
-        />
+        <ImageUpload id="image" onInput={inputHandler} />
         <Input
           id="title"
           element="input"

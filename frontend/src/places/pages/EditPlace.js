@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 
 import Input from "../../shared/components/FormElements/Input";
@@ -11,9 +11,11 @@ import { useParams, useHistory } from "react-router-dom";
 import { useForm } from "../../shared/hooks/use-form";
 import Button from "../../shared/components/FormElements/Button";
 import { useHttpHook } from "../../shared/hooks/http-hook";
+import { AuthContext } from "../../shared/context/auth-context";
 
 const NewPlace = () => {
   const placeId = useParams().placeId;
+  const auth = useContext(AuthContext);
   const history = useHistory();
   const { sendRequest, HttpFeedback } = useHttpHook();
   const [loadedPlace, setLoadedPlace] = useState();
@@ -69,7 +71,8 @@ const NewPlace = () => {
           description: formState.inputs.description.value,
         }),
         {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + auth.token,
         }
       );
       history.goBack()

@@ -18,7 +18,6 @@ place_router.get("/user/:uId", getPlacesByUserId);
 // Get a specific place by place id (pid)
 place_router.get("/:pId", getPlaceById);
 
-
 // add middleware of authorization
 place_router.use(checkAuth)
 

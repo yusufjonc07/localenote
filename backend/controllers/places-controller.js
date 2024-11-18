@@ -20,10 +20,10 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(err);
   }
 
-  if (!places || places.length === 0) {
-    const err = new HttpError(`There are no places by ${userId}`, 404);
-    return next(err);
-  }
+  // if (!places || places.length === 0) {
+  //   const err = new HttpError(`There are no places by ${userId}`, 404);
+  //   return next(err);
+  // }
 
   res.json({ places: places.map(place => place.toObject({getters: true})) });
 };
