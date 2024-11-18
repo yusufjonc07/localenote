@@ -90,19 +90,25 @@ const ImageUpload = (props) => {
       <div className={`image-upload ${props.center && "center"}`}>
         <div className={`image-upload ${props.center && "center"}`}>
           {previewUrl ? (
-            <AvatarEditor
-            className="image-upload__preview"
-              ref={editorRef}
-              image={previewUrl}
-              width={100}
-              height={100}
-              border={50}
-              color={color || [255, 255, 255, 0.6]} // RGBA
-              scale={scale}
-              rotate={0}
-              onPositionChange={handlePositionChange}
-              onImageReady={backgroundColorHandler}
-            />
+            props.editor ? (
+              <AvatarEditor
+                className="image-upload__preview"
+                ref={editorRef}
+                image={previewUrl}
+                width={100}
+                height={100}
+                border={50}
+                color={color || [255, 255, 255, 0.6]} // RGBA
+                scale={scale}
+                rotate={0}
+                onPositionChange={handlePositionChange}
+                onImageReady={backgroundColorHandler}
+              />
+            ) : (
+              <div className="image-upload__preview">
+                <img src={previewUrl} alt="Preview ..." />
+              </div>
+            )
           ) : (
             <div className="image-upload__preview">
               <p>Please choose an image</p>
@@ -114,7 +120,7 @@ const ImageUpload = (props) => {
               {previewUrl ? "CHANGE" : "PICK"}
             </Button>
 
-            {previewUrl && (
+            {previewUrl && props.editor && (
               <div className="button-group">
                 <Button type="button" onClick={zoomInHandler}>
                   +

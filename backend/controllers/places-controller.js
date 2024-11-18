@@ -2,6 +2,8 @@ const HttpError = require("../models/http-error");
 const Place = require("../models/place");
 const User = require("../models/user");
 const { default: mongoose } = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uId;
@@ -52,23 +54,19 @@ const getPlaceById = async (req, res, next) => {
 
 const createPlace = async (req, res, next) => {
   const { title, description, address, creator, location } = req.body;
-  console.log(location);
   
   const newPlace = new Place({
     title,
     description,
-    location,
+    location: JSON.parse(location),
     address,
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg",
+    image: req.file.path,
     creator,
   });
 
   let user;
 
   try {
-    
-    
     user = await User.findById(creator);
   } catch (error) {
     const err = new HttpError(
@@ -178,6 +176,10 @@ const deletePlace = async (req, res, next) => {
     );
     return next(err);
   }
+
+  fs.unlink(path.join(place.image), (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Place was deleted" });
 };

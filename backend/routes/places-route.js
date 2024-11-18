@@ -7,6 +7,7 @@ const {
   deletePlace,
 } = require("../controllers/places-controller");
 const { check } = require("express-validator");
+const fileUpload = require("../middleware/file-upload");
 
 const place_router = Router();
 
@@ -17,11 +18,16 @@ place_router.get("/user/:uId", getPlacesByUserId);
 place_router.get("/:pId", getPlaceById);
 
 // Create a new place
-place_router.post("/", [
-  check('title').isString().notEmpty(),
-  check('description').isString().notEmpty(),
-  check('creator').isString().notEmpty(),
-], createPlace);
+place_router.post(
+  "/",
+  fileUpload.single("image"),
+  [
+    check("title").isString().notEmpty(),
+    check("description").isString().notEmpty(),
+    check("creator").isString().notEmpty(),
+  ],
+  createPlace
+);
 
 // Update a place by id
 place_router.patch("/:pId", updatePlace);
